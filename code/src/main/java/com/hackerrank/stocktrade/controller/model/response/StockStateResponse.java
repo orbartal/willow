@@ -6,6 +6,7 @@ public class StockStateResponse {
 	private int fluctuations; // This field describes the number of fluctuations
 	private Double maxRise; // This field is the maximum daily price increase for the period.
 	private Double maxFall; // This field is the maximum daily price decline for the period.
+	private String message; //Message in case no data for the symbol
 
 	public String getSymbol() {
 		return symbol;
@@ -30,6 +31,12 @@ public class StockStateResponse {
 	}
 	public void setMaxFall(Double maxFall) {
 		this.maxFall = maxFall;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 }
