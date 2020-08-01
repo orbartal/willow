@@ -1,9 +1,9 @@
 package com.hackerrank.stocktrade.controller;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,18 +12,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hackerrank.stocktrade.application.TradeApplication;
 import com.hackerrank.stocktrade.controller.model.request.AddTradeRequest;
 import com.hackerrank.stocktrade.controller.model.response.StockPricesResponse;
 import com.hackerrank.stocktrade.controller.model.response.StockStateResponse;
 import com.hackerrank.stocktrade.controller.model.response.TradeResponse;
-import com.hackerrank.stocktrade.model.Trade;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @RestController
 public class StockTradeApiRestController {
 
-    //
+	@Autowired
+	private TradeApplication tradeApplication;
+	
 	@ApiOperation(value = "Adding new trades")
 	@ApiResponses({
         @ApiResponse(code = 201, message = "Success"),
@@ -31,6 +35,7 @@ public class StockTradeApiRestController {
 	})
     @RequestMapping(value = "/trades", method = RequestMethod.POST)
 	public ResponseEntity<Void> addTrade(@RequestBody AddTradeRequest trade) throws RuntimeException {
+		tradeApplication.addTrade(trade);
     	return ResponseEntity.ok().build();	
     }
 
@@ -40,6 +45,7 @@ public class StockTradeApiRestController {
 	})
     @DeleteMapping("/erase")
     public ResponseEntity<Void> erase() {
+		tradeApplication.deleteAllTrades();
     	return ResponseEntity.ok().build();	
     }
 
@@ -49,7 +55,8 @@ public class StockTradeApiRestController {
 	})
     @RequestMapping(value = "/trades", method = RequestMethod.GET)
 	public ResponseEntity<List<TradeResponse>> getAllTrades() throws RuntimeException {
-    	return ResponseEntity.ok(new ArrayList<>());	
+		List<TradeResponse> data = tradeApplication.readAllTrades();
+    	return ResponseEntity.ok(data);	
 	}
 
 	@ApiOperation(value = "Returning the trade records filtered by the user ID")
@@ -59,7 +66,8 @@ public class StockTradeApiRestController {
 	})
     @RequestMapping(value = "/trades/users/{userID}", method = RequestMethod.GET)
 	public ResponseEntity<List<TradeResponse>> getAllTradesByUser(@PathVariable("userID") Long userID) throws RuntimeException {
-    	return ResponseEntity.ok(new ArrayList<>());	
+		List<TradeResponse> data = tradeApplication.readAllTradesByUser(userID);
+    	return ResponseEntity.ok(data);	
 	}
     
 	@ApiOperation(value = "Returning the highest and lowest price for the stock symbol in the given date range")
@@ -71,7 +79,8 @@ public class StockTradeApiRestController {
 	public ResponseEntity<StockPricesResponse> getStocksPricesByDateRange(
 			@PathVariable("startDate") Date startDate,
 			@PathVariable("endDate") Date endDate) throws RuntimeException {
-    	return ResponseEntity.ok(new StockPricesResponse());	
+		StockPricesResponse data = tradeApplication.readStocksPricesByDateRange(startDate, endDate);
+    	return ResponseEntity.ok(data);	
 	}
 
 	@ApiOperation(value = "Returning the fluctuations count, maximum daily rise and maximum daily fall for each stock symbol for the period in the given date range")
@@ -83,7 +92,8 @@ public class StockTradeApiRestController {
 	public ResponseEntity<List<StockStateResponse>> getStocksStatsByDateRange(
 			@PathVariable("startDate") Date startDate,
 			@PathVariable("endDate") Date endDate) throws RuntimeException {
-    	return ResponseEntity.ok(new ArrayList<>());	
+		List<StockStateResponse> data = tradeApplication.readStocksStatsByDateRange(startDate, endDate);
+    	return ResponseEntity.ok(data);	
 	}
 
 }
