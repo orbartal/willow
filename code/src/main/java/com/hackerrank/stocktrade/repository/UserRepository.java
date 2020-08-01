@@ -1,4 +1,7 @@
 package com.hackerrank.stocktrade.repository;
 
-public interface UserRepository {
+import org.springframework.stereotype.Component;
+
+@Component
+public class UserRepository {
 }

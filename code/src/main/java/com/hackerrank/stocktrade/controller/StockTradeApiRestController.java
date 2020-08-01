@@ -77,9 +77,10 @@ public class StockTradeApiRestController {
 	})
     @RequestMapping(value = "/stocks/{stockSymbol}/price?start={startDate}&end={endDate}", method = RequestMethod.GET)
 	public ResponseEntity<StockPricesResponse> getStocksPricesByDateRange(
+			@PathVariable("stockSymbol") String stockSymbol,
 			@PathVariable("startDate") Date startDate,
 			@PathVariable("endDate") Date endDate) throws RuntimeException {
-		StockPricesResponse data = tradeApplication.readStocksPricesByDateRange(startDate, endDate);
+		StockPricesResponse data = tradeApplication.readStocksPricesByDateRange(stockSymbol, startDate, endDate);
     	return ResponseEntity.ok(data);	
 	}
 

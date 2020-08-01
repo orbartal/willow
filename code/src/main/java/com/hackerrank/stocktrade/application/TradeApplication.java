@@ -3,35 +3,61 @@ package com.hackerrank.stocktrade.application;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hackerrank.stocktrade.controller.model.request.AddTradeRequest;
 import com.hackerrank.stocktrade.controller.model.response.StockPricesResponse;
 import com.hackerrank.stocktrade.controller.model.response.StockStateResponse;
 import com.hackerrank.stocktrade.controller.model.response.TradeResponse;
+import com.hackerrank.stocktrade.logic.TradeReader;
+import com.hackerrank.stocktrade.logic.TradeWriter;
+import com.hackerrank.stocktrade.logic.model.TradeInfo;
 
 @Service
 public class TradeApplication {
+	
+	@Autowired
+	private ApplicationMapper applicationMapper;
+	
+	@Autowired
+	private TradeReader tradeReader;
+	
+	@Autowired
+	private TradeWriter tradeWriter;
 
-	public void addTrade(AddTradeRequest trade) {		
+	public void addTrade(AddTradeRequest tradeRequest) {
+		TradeInfo tradeInfo = applicationMapper.tradeRequestToInfo(tradeRequest);
+		tradeWriter.addTrade(tradeInfo);
 	}
 
-	public void deleteAllTrades() {		
+	public void deleteAllTrades() {	
+		tradeWriter.deleteAllTrades();
 	}
 
 	public List<TradeResponse> readAllTrades() {
-		return new ArrayList<>();
+		List<TradeInfo> infos = tradeReader.readAllTrades();
+		return infos.stream().map(t->applicationMapper.tradeInfoToResponse(t)).collect(Collectors.toList());
 	}
 
 	public List<TradeResponse> readAllTradesByUser(Long userID) {
-		return new ArrayList<>();
+		List<TradeInfo> infos = tradeReader.readAllTradesByUser(userID);
+		return infos.stream().map(t->applicationMapper.tradeInfoToResponse(t)).collect(Collectors.toList());
 	}
 
-	public StockPricesResponse readStocksPricesByDateRange(Date startDate, Date endDate) {
-		return new StockPricesResponse();
+	public StockPricesResponse readStocksPricesByDateRange(String symbol, Date startDate, Date endDate) {
+		Double highest = tradeReader.readHighestPriceBySymbolAndDateRange(symbol, startDate, endDate);
+		Double lowest = tradeReader.readLowestPriceBySymbolAndDateRange(symbol, startDate, endDate); 
+		StockPricesResponse response = new StockPricesResponse();
+		response.setSymbol(symbol);
+		response.setHighest(highest);
+		response.setLowest(lowest);
+		return response;
 	}
 
+	//TODO
 	public List<StockStateResponse> readStocksStatsByDateRange(Date startDate, Date endDate) {
 		return new ArrayList<>();
 	}
