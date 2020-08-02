@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hackerrank.stocktrade.application.TradeApplication;
@@ -76,11 +77,12 @@ public class StockTradeApiRestController {
         @ApiResponse(code = 200, message = "Success"),
        	@ApiResponse(code = 404, message = "Requested stock symbol does not exist"),
 	})
-    @RequestMapping(value = "/stocks/{stockSymbol}/price?start={startDate}&end={endDate}", method = RequestMethod.GET)
+    @RequestMapping(value = "/stocks/{stockSymbol}/price", method = RequestMethod.GET)
 	public ResponseEntity<StockPricesResponse> getStocksPricesByDateRange(
 			@PathVariable("stockSymbol") String stockSymbol,
-			@PathVariable("startDate") Date startDate,
-			@PathVariable("endDate") Date endDate) throws RuntimeException {
+			@RequestParam("startDate") String startDate,
+			@RequestParam("endDate")  String endDate
+			) throws RuntimeException {
 		StockPricesResponse data = tradeApplication.readStocksPricesByDateRange(stockSymbol, startDate, endDate);
     	return ResponseEntity.ok(data);	
 	}

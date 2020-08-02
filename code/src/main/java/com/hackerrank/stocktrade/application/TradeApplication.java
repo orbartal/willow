@@ -47,7 +47,9 @@ public class TradeApplication {
 		return infos.stream().map(t->applicationMapper.tradeInfoToResponse(t)).collect(Collectors.toList());
 	}
 
-	public StockPricesResponse readStocksPricesByDateRange(String symbol, Date startDate, Date endDate) {
+	public StockPricesResponse readStocksPricesByDateRange(String symbol, String start, String end) {
+		Date startDate = applicationMapper.stringToDate(start);
+		Date endDate = applicationMapper.stringToDate(end);
 		Double highest = tradeReader.readHighestPriceBySymbolAndDateRange(symbol, startDate, endDate);
 		Double lowest = tradeReader.readLowestPriceBySymbolAndDateRange(symbol, startDate, endDate); 
 		StockPricesResponse response = new StockPricesResponse();

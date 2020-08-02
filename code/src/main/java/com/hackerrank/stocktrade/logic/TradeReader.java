@@ -34,11 +34,11 @@ public class TradeReader {
 	}
 
 	public Double readHighestPriceBySymbolAndDateRange(String symbol, Date startDate, Date endDate) {
-		return null;
+		return tradeRepository.readHighestPriceBySymbolAndDateRange(symbol, startDate, endDate);
 	}
 
 	public Double readLowestPriceBySymbolAndDateRange(String symbol, Date startDate, Date endDate) {
-		return null;
+		return tradeRepository.readLowestPriceBySymbolAndDateRange(symbol, startDate, endDate);
 	}
 
 }
