@@ -1,6 +1,5 @@
 package com.hackerrank.stocktrade.application;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,6 +11,7 @@ import com.hackerrank.stocktrade.controller.model.request.AddTradeRequest;
 import com.hackerrank.stocktrade.controller.model.response.StockPricesResponse;
 import com.hackerrank.stocktrade.controller.model.response.StockStateResponse;
 import com.hackerrank.stocktrade.controller.model.response.TradeResponse;
+import com.hackerrank.stocktrade.exceptions.StockSymbolNotFoundException;
 import com.hackerrank.stocktrade.logic.TradeReader;
 import com.hackerrank.stocktrade.logic.TradeWriter;
 import com.hackerrank.stocktrade.logic.model.TradeInfo;
@@ -51,7 +51,10 @@ public class TradeApplication {
 		Date startDate = applicationMapper.stringToDate(start);
 		Date endDate = applicationMapper.stringToDate(end);
 		Double highest = tradeReader.readHighestPriceBySymbolAndDateRange(symbol, startDate, endDate);
-		Double lowest = tradeReader.readLowestPriceBySymbolAndDateRange(symbol, startDate, endDate); 
+		Double lowest = tradeReader.readLowestPriceBySymbolAndDateRange(symbol, startDate, endDate);
+		if (highest == null || lowest == null) {
+			throw new StockSymbolNotFoundException();
+		}
 		StockPricesResponse response = new StockPricesResponse();
 		response.setSymbol(symbol);
 		response.setHighest(highest);

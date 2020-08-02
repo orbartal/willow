@@ -22,7 +22,7 @@ public class ApplicationMapper {
 	public TradeInfo tradeRequestToInfo(AddTradeRequest input) {
 		UserDto userDto = input.getUser();
 		UserInfo userInfo = new UserInfo(userDto.getId(), userDto.getName());
-		TradeType type = TradeType.valueOf(input.getType());
+		TradeType type = TradeType.valueOf(input.getType().toUpperCase());
 		Timestamp time = input.getTradeTimestamp();
 		return new TradeInfo(input.getId(), type, userInfo, input.getStockSymbol(), input.getStockQuantity(), input.getStockPrice(), time);
 	}

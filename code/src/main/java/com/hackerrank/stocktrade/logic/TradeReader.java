@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hackerrank.stocktrade.controller.model.response.StockStateResponse;
+import com.hackerrank.stocktrade.exceptions.UserNotFoundException;
 import com.hackerrank.stocktrade.logic.model.StockStateInfo;
 import com.hackerrank.stocktrade.logic.model.TradeInfo;
 import com.hackerrank.stocktrade.repository.TradeRepository;
@@ -33,6 +34,9 @@ public class TradeReader {
 
 	public List<TradeInfo> readAllTradesByUser(Long userID) {
 		List<TradeEntity> entities = tradeRepository.readAllByUserId(userID);
+		if (entities.isEmpty()) {
+			throw new UserNotFoundException();
+		}
 		return entities.stream().map(e->dataMapper.tradeEntityToInfo(e)).collect(Collectors.toList());
 	}
 
