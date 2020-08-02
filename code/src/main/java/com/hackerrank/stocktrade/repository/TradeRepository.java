@@ -41,4 +41,7 @@ public interface TradeRepository extends JpaRepository<TradeEntity, Long> {
 			@Param("startDate") Date startDate, 
 			@Param("endDate") Date endDate);
 
+	@Query(value = "SELECT COUNT(t) FROM TradeEntity t WHERE t.stockSymbol = :symbol")
+	public Long countByStockSymbol(@Param("symbol") String symbol);
+
 }

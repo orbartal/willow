@@ -123,4 +123,8 @@ public class TradeReader {
 		return new StockStateInfo(count, maxRise, maxFall);
 	}
 
+	public Long countTradeBySymbol(String symbol) {
+		return tradeRepository.countByStockSymbol(symbol);
+	}
+
 }
