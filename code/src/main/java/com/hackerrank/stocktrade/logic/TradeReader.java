@@ -14,6 +14,7 @@ import com.hackerrank.stocktrade.controller.model.response.StockStateFoundRespon
 import com.hackerrank.stocktrade.controller.model.response.StockStateNotFoundResponse;
 import com.hackerrank.stocktrade.controller.model.response.StockStateResponse;
 import com.hackerrank.stocktrade.exceptions.UserNotFoundException;
+import com.hackerrank.stocktrade.logic.model.FluctuationInfo;
 import com.hackerrank.stocktrade.logic.model.StockStateInfo;
 import com.hackerrank.stocktrade.logic.model.TradeInfo;
 import com.hackerrank.stocktrade.repository.TradeRepository;
@@ -23,8 +24,6 @@ import com.hackerrank.stocktrade.repository.model.TradeEntity;
 @Service
 @Transactional(readOnly = true)
 public class TradeReader {
-
-	private static final BigDecimal ZERO = toBigDecimalDigit(new Double(0.0), 1);
 
 	@Autowired
 	private TradeRepository tradeRepository;
@@ -57,28 +56,32 @@ public class TradeReader {
 		return tradeRepository.readAllStocksSymbols();
 	}
 
-	public StockStateResponse readStockStateResponse(String symbol, Date startDate, Date endDate) {
-		List<Double> prices = tradeRepository.readPricesBySymbolAndDateRangeOrderByTime(symbol, startDate, endDate);
-		if (prices.isEmpty()) {
+	public StockStateResponse buildStockStateResponse(StockStateInfo input) {
+		if (!input.getFluctuation().isPresent()) {
 			StockStateNotFoundResponse result = new StockStateNotFoundResponse();
-			result.setSymbol(symbol);
+			result.setSymbol(input.getSymbol());
 			result.setMessage("There are no trades in the given date range");
 			return result;
 		}
+		FluctuationInfo info = input.getFluctuation().get();
 		StockStateFoundResponse result = new StockStateFoundResponse();
-		result.setSymbol(symbol);
+		result.setSymbol(input.getSymbol());
+		result.setFluctuations(info.getFluctuations());
+		result.setMaxFall(toBigDecimalDigit(info.getMaxRise(), 2));
+		result.setMaxRise(toBigDecimalDigit(info.getMaxFall(), 2));
+		return result;
+	}
+
+	public StockStateInfo readStockState(String symbol, Date startDate, Date endDate) {
+		List<Double> prices = tradeRepository.readPricesBySymbolAndDateRangeOrderByTime(symbol, startDate, endDate);
+		if (prices.isEmpty()) {
+			return new StockStateInfo (symbol, null);
+		}
 		List<Double> prices2 = filterSamePriceFollowingDay(prices);
 		if (prices2.size()==1) {
-			result.setFluctuations(0);
-			result.setMaxFall(ZERO);
-			result.setMaxRise(ZERO);
-			return result;
+			return new StockStateInfo(symbol, new FluctuationInfo(0, 0.0, 0.0));
 		}
-		StockStateInfo stockStateInfo = readStockStateInfo(prices2);
-		result.setFluctuations(stockStateInfo.getFluctuations());
-		result.setMaxFall(toBigDecimalDigit(stockStateInfo.getMaxRise(), 2));
-		result.setMaxRise(toBigDecimalDigit(stockStateInfo.getMaxFall(), 2));
-		return result;
+		return new StockStateInfo(symbol, readStockStateInfo(prices2));
 	}
 
 	static private BigDecimal toBigDecimalDigit(Double amount, int digits) {
@@ -97,7 +100,7 @@ public class TradeReader {
 		return results;
 	}
 
-	private StockStateInfo readStockStateInfo(List<Double> prices) {
+	private FluctuationInfo readStockStateInfo(List<Double> prices) {
 		Double maxRise = 0.0;
 		Double maxFall = 0.0;
 		int count = 0;
@@ -120,7 +123,7 @@ public class TradeReader {
 			}
 			prev = current;
 		}
-		return new StockStateInfo(count, maxRise, maxFall);
+		return new FluctuationInfo(count, maxRise, maxFall);
 	}
 
 	public Long countTradeBySymbol(String symbol) {

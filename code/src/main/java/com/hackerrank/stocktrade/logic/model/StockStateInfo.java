@@ -1,27 +1,23 @@
 package com.hackerrank.stocktrade.logic.model;
 
+import java.util.Optional;
+
 public class StockStateInfo {
 
-	private final int fluctuations; // This field describes the number of fluctuations
-	private final Double maxRise; // This field is the maximum daily price increase for the period.
-	private final Double maxFall; // This field is the maximum daily price decline for the period.
+	private final String symbol;
+	private final Optional<FluctuationInfo> fluctuation;
 
-	public StockStateInfo(int fluctuations, Double maxRise, Double maxFall) {
-		this.fluctuations = fluctuations;
-		this.maxRise = maxRise;
-		this.maxFall = maxFall;
+	public StockStateInfo(String symbol, FluctuationInfo fluctuation) {
+		this.symbol = symbol;
+		this.fluctuation = Optional.ofNullable(fluctuation);
 	}
 
-	public int getFluctuations() {
-		return fluctuations;
+	public String getSymbol() {
+		return symbol;
 	}
 
-	public Double getMaxRise() {
-		return maxRise;
-	}
-
-	public Double getMaxFall() {
-		return maxFall;
+	public Optional<FluctuationInfo> getFluctuation() {
+		return fluctuation;
 	}
 
 }
