@@ -28,6 +28,7 @@ public class TradeWriter {
 
 	public void deleteAllTrades() {
 		tradeRepository.deleteAll();
+		userRepository.deleteAll();
 	}
 
 	public void addTrade(TradeInfo info) {
