@@ -1,6 +1,5 @@
 package com.hackerrank.stocktrade.logic;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hackerrank.stocktrade.controller.model.response.StockStateFoundResponse;
-import com.hackerrank.stocktrade.controller.model.response.StockStateNotFoundResponse;
-import com.hackerrank.stocktrade.controller.model.response.StockStateResponse;
 import com.hackerrank.stocktrade.exceptions.UserNotFoundException;
 import com.hackerrank.stocktrade.logic.model.FluctuationInfo;
 import com.hackerrank.stocktrade.logic.model.StockStateInfo;
@@ -56,22 +52,6 @@ public class TradeReader {
 		return tradeRepository.readAllStocksSymbols();
 	}
 
-	public StockStateResponse buildStockStateResponse(StockStateInfo input) {
-		if (!input.getFluctuation().isPresent()) {
-			StockStateNotFoundResponse result = new StockStateNotFoundResponse();
-			result.setSymbol(input.getSymbol());
-			result.setMessage("There are no trades in the given date range");
-			return result;
-		}
-		FluctuationInfo info = input.getFluctuation().get();
-		StockStateFoundResponse result = new StockStateFoundResponse();
-		result.setSymbol(input.getSymbol());
-		result.setFluctuations(info.getFluctuations());
-		result.setMaxFall(toBigDecimalDigit(info.getMaxRise(), 2));
-		result.setMaxRise(toBigDecimalDigit(info.getMaxFall(), 2));
-		return result;
-	}
-
 	public StockStateInfo readStockState(String symbol, Date startDate, Date endDate) {
 		List<Double> prices = tradeRepository.readPricesBySymbolAndDateRangeOrderByTime(symbol, startDate, endDate);
 		if (prices.isEmpty()) {
@@ -84,9 +64,6 @@ public class TradeReader {
 		return new StockStateInfo(symbol, readStockStateInfo(prices2));
 	}
 
-	static private BigDecimal toBigDecimalDigit(Double amount, int digits) {
-		return new BigDecimal(amount).setScale(digits, BigDecimal.ROUND_HALF_UP);
-	}
 
 	//TODO: Could this be written as a stream?
 	private List<Double> filterSamePriceFollowingDay(List<Double> prices) {

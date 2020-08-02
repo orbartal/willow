@@ -1,5 +1,6 @@
 package com.hackerrank.stocktrade.application;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,7 +10,12 @@ import org.springframework.stereotype.Service;
 
 import com.hackerrank.stocktrade.controller.model.dto.UserDto;
 import com.hackerrank.stocktrade.controller.model.request.AddTradeRequest;
+import com.hackerrank.stocktrade.controller.model.response.StockStateFoundResponse;
+import com.hackerrank.stocktrade.controller.model.response.StockStateNotFoundResponse;
+import com.hackerrank.stocktrade.controller.model.response.StockStateResponse;
 import com.hackerrank.stocktrade.controller.model.response.TradeResponse;
+import com.hackerrank.stocktrade.logic.model.FluctuationInfo;
+import com.hackerrank.stocktrade.logic.model.StockStateInfo;
 import com.hackerrank.stocktrade.logic.model.TradeInfo;
 import com.hackerrank.stocktrade.logic.model.TradeType;
 import com.hackerrank.stocktrade.logic.model.UserInfo;
@@ -50,6 +56,26 @@ public class ApplicationMapper {
 		}catch(ParseException e) {
 			throw new RuntimeException();//TODO
 		}
+	}
+	
+	public StockStateResponse stockStateInfoToResponse(StockStateInfo input) {
+		if (!input.getFluctuation().isPresent()) {
+			StockStateNotFoundResponse result = new StockStateNotFoundResponse();
+			result.setSymbol(input.getSymbol());
+			result.setMessage("There are no trades in the given date range");
+			return result;
+		}
+		FluctuationInfo info = input.getFluctuation().get();
+		StockStateFoundResponse result = new StockStateFoundResponse();
+		result.setSymbol(input.getSymbol());
+		result.setFluctuations(info.getFluctuations());
+		result.setMaxFall(toBigDecimalDigit(info.getMaxRise(), 2));
+		result.setMaxRise(toBigDecimalDigit(info.getMaxFall(), 2));
+		return result;
+	}
+
+	private BigDecimal toBigDecimalDigit(Double amount, int digits) {
+		return new BigDecimal(amount).setScale(digits, BigDecimal.ROUND_HALF_UP);
 	}
 
 }
