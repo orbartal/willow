@@ -16,6 +16,7 @@ import com.hackerrank.stocktrade.controller.model.response.TradeResponse;
 import com.hackerrank.stocktrade.exceptions.StockSymbolNotFoundException;
 import com.hackerrank.stocktrade.logic.TradeReader;
 import com.hackerrank.stocktrade.logic.TradeWriter;
+import com.hackerrank.stocktrade.logic.model.StockStateInfo;
 import com.hackerrank.stocktrade.logic.model.TradeInfo;
 
 @Service
@@ -76,7 +77,8 @@ public class TradeApplication {
 		Date endDate = applicationMapper.stringToDate(end);
 		Date endDate2 = new Date(endDate.getTime() + (1000 * 60 * 60 * 24)-1); //Until end of day
 		List<String> symbols = tradeReader.readAllStocksSymbols();
-		return symbols.stream().map(s->tradeReader.readStockState(s, startDate, endDate2)).map(i->applicationMapper.stockStateInfoToResponse(i)).collect(Collectors.toList());
+		List<StockStateInfo> infos = symbols.stream().map(s->tradeReader.readStockState(s, startDate, endDate2)).collect(Collectors.toList());
+		return infos.stream().map(i->applicationMapper.stockStateInfoToResponse(i)).collect(Collectors.toList());
 	}
 
 }
