@@ -23,8 +23,8 @@ public class ApplicationMapper {
 		UserDto userDto = input.getUser();
 		UserInfo userInfo = new UserInfo(userDto.getId(), userDto.getName());
 		TradeType type = TradeType.valueOf(input.getType().toUpperCase());
-		Timestamp time = input.getTradeTimestamp();
-		return new TradeInfo(input.getId(), type, userInfo, input.getStockSymbol(), input.getStockQuantity(), input.getStockPrice(), time);
+		Timestamp time = input.getTimestamp();
+		return new TradeInfo(input.getId(), type, userInfo, input.getSymbol(), input.getShares(), input.getPrice(), time);
 	}
 
 	public TradeResponse tradeInfoToResponse(TradeInfo input) {
@@ -35,10 +35,10 @@ public class ApplicationMapper {
 		
 		TradeResponse output = new TradeResponse();
 		output.setId(input.getId());
-		output.setStockPrice(input.getStockPrice());
-		output.setStockQuantity(input.getStockQuantity());
-		output.setStockSymbol(input.getStockSymbol());
-		output.setTradeTimestamp(input.getTradeTimestamp());
+		output.setPrice(input.getStockPrice());
+		output.setShares(input.getStockQuantity());
+		output.setSymbol(input.getStockSymbol());
+		output.setTimestamp(input.getTradeTimestamp());
 		output.setType(input.getType().name().toLowerCase());
 		output.setUser(userDto);
 		return output;

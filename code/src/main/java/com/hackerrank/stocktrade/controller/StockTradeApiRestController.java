@@ -92,10 +92,10 @@ public class StockTradeApiRestController {
     @RequestMapping(value = "/stocks/{stockSymbol}/price", method = RequestMethod.GET)
 	public ResponseEntity<StockPricesResponse> getStocksPricesByDateRange(
 			@PathVariable("stockSymbol") String stockSymbol,
-			@RequestParam("startDate") String startDate,
-			@RequestParam("endDate")  String endDate
+			@RequestParam("start") String start,
+			@RequestParam("end")  String end
 			) throws RuntimeException {
-		StockPricesResponse data = tradeApplication.readStocksPricesByDateRange(stockSymbol, startDate, endDate);
+		StockPricesResponse data = tradeApplication.readStocksPricesByDateRange(stockSymbol, start, end);
     	return ResponseEntity.ok(data);	
 	}
 
@@ -105,17 +105,15 @@ public class StockTradeApiRestController {
 	})
     @RequestMapping(value = "/stocks/stats", method = RequestMethod.GET)
 	public ResponseEntity<List<StockStateResponse>> getStocksStatsByDateRange(
-			@RequestParam("startDate") String startDate,
-			@RequestParam("endDate")  String endDate
+			@RequestParam("start") String start,
+			@RequestParam("end")  String end
 			) throws RuntimeException {
-		List<StockStateResponse> data = tradeApplication.readStocksStatsByDateRange(startDate, endDate);
+		List<StockStateResponse> data = tradeApplication.readStocksStatsByDateRange(start, end);
     	return ResponseEntity.ok(data);	
 	}
-	
+
 	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="Requested stock symbol does not exist")
 	@ExceptionHandler(StockSymbolNotFoundException.class)
 	public void error(StockSymbolNotFoundException ex) {}
-    
-	
 
 }

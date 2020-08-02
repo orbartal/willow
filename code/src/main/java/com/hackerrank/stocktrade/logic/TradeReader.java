@@ -1,5 +1,6 @@
 package com.hackerrank.stocktrade.logic;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,8 @@ import com.hackerrank.stocktrade.repository.model.TradeEntity;
 @Service
 @Transactional(readOnly = true)
 public class TradeReader {
+
+	private static final BigDecimal ZERO = toBigDecimalDigit(new Double(0.0), 1);
 
 	@Autowired
 	private TradeRepository tradeRepository;
@@ -67,20 +70,25 @@ public class TradeReader {
 		List<Double> prices2 = filterSamePriceFollowingDay(prices);
 		if (prices2.size()<3) {
 			result.setFluctuations(0);
-			result.setMaxFall(0.0);
-			result.setMaxRise(0.0);
+			result.setMaxFall(ZERO);
+			result.setMaxRise(ZERO);
 			return result;
 		}
 		StockStateInfo stockStateInfo = readStockStateInfo(prices2);
 		result.setFluctuations(stockStateInfo.getFluctuations());
-		result.setMaxFall(stockStateInfo.getMaxRise());
-		result.setMaxRise(stockStateInfo.getMaxFall());
+		result.setMaxFall(toBigDecimalDigit(stockStateInfo.getMaxRise(), 2));
+		result.setMaxRise(toBigDecimalDigit(stockStateInfo.getMaxFall(), 2));
 		return result;
+	}
+
+	static private BigDecimal toBigDecimalDigit(Double amount, int digits) {
+		return new BigDecimal(amount).setScale(digits, BigDecimal.ROUND_HALF_UP);
 	}
 
 	//TODO: Could this be written as a stream?
 	private List<Double> filterSamePriceFollowingDay(List<Double> prices) {
 		List<Double> results = new ArrayList<>();
+		results.add(prices.get(0));
 		for (int i = 1; i<prices.size(); i++) {
 			if (prices.get(i-1)!=prices.get(i)) {
 				results.add(prices.get(i));
@@ -96,7 +104,6 @@ public class TradeReader {
 		Double prev = prices.get(0);
 		Double current = prices.get(1);
 		Boolean oldDirection = prev<current;
-		prev = prices.get(1);
 		for (int i = 1; i<prices.size(); i++) {
 			current = prices.get(i);
 			Boolean newDirection = prev<current;
