@@ -8,14 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hackerrank.stocktrade.controller.model.request.AddTradeRequest;
-import com.hackerrank.stocktrade.controller.model.response.StockPricesFoundResponse;
-import com.hackerrank.stocktrade.controller.model.response.StockPricesNotFoundResponse;
 import com.hackerrank.stocktrade.controller.model.response.StockPricesResponse;
 import com.hackerrank.stocktrade.controller.model.response.StockStateResponse;
 import com.hackerrank.stocktrade.controller.model.response.TradeResponse;
-import com.hackerrank.stocktrade.exceptions.StockSymbolNotFoundException;
 import com.hackerrank.stocktrade.logic.TradeReader;
 import com.hackerrank.stocktrade.logic.TradeWriter;
+import com.hackerrank.stocktrade.logic.model.StockPricesInfo;
 import com.hackerrank.stocktrade.logic.model.StockStateInfo;
 import com.hackerrank.stocktrade.logic.model.TradeInfo;
 
@@ -53,22 +51,8 @@ public class TradeApplication {
 	public StockPricesResponse readStocksPricesByDateRange(String symbol, String start, String end) {
 		Date startDate = applicationMapper.stringToStartDate(start);
 		Date endDate = applicationMapper.stringToEndDate(end);
-		Double highest = tradeReader.readHighestPriceBySymbolAndDateRange(symbol, startDate, endDate);
-		Double lowest = tradeReader.readLowestPriceBySymbolAndDateRange(symbol, startDate, endDate);
-		if (highest == null || lowest == null) {
-			Long count = tradeReader.countTradeBySymbol(symbol);
-			if (count == 0) {
-				throw new StockSymbolNotFoundException();
-			}
-			StockPricesNotFoundResponse response = new StockPricesNotFoundResponse();
-			response.setMessage("There are no trades in the given date range");
-			return response;
-		}
-		StockPricesFoundResponse response = new StockPricesFoundResponse();
-		response.setSymbol(symbol);
-		response.setHighest(highest);
-		response.setLowest(lowest);
-		return response;
+		StockPricesInfo info = tradeReader.readStocksPricesByDateRange(symbol, startDate, endDate);
+		return applicationMapper.stocksPricesInfoToResponse(symbol, info);
 	}
 
 	public List<StockStateResponse> readStocksStatsByDateRange(String start, String end) {

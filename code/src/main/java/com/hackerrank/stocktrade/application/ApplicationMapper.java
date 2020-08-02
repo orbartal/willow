@@ -10,12 +10,17 @@ import org.springframework.stereotype.Service;
 
 import com.hackerrank.stocktrade.controller.model.dto.UserDto;
 import com.hackerrank.stocktrade.controller.model.request.AddTradeRequest;
+import com.hackerrank.stocktrade.controller.model.response.StockPricesFoundResponse;
+import com.hackerrank.stocktrade.controller.model.response.StockPricesNotFoundResponse;
+import com.hackerrank.stocktrade.controller.model.response.StockPricesResponse;
 import com.hackerrank.stocktrade.controller.model.response.StockStateFoundResponse;
 import com.hackerrank.stocktrade.controller.model.response.StockStateNotFoundResponse;
 import com.hackerrank.stocktrade.controller.model.response.StockStateResponse;
 import com.hackerrank.stocktrade.controller.model.response.TradeResponse;
 import com.hackerrank.stocktrade.exceptions.InvalidDateFormatException;
+import com.hackerrank.stocktrade.exceptions.StockSymbolNotFoundException;
 import com.hackerrank.stocktrade.logic.model.FluctuationInfo;
+import com.hackerrank.stocktrade.logic.model.StockPricesInfo;
 import com.hackerrank.stocktrade.logic.model.StockStateInfo;
 import com.hackerrank.stocktrade.logic.model.TradeInfo;
 import com.hackerrank.stocktrade.logic.model.TradeType;
@@ -86,6 +91,30 @@ public class ApplicationMapper {
 
 	private BigDecimal toBigDecimalDigit(Double amount, int digits) {
 		return new BigDecimal(amount).setScale(digits, BigDecimal.ROUND_HALF_UP);
+	}
+	
+	public StockPricesResponse stocksPricesInfoToResponse(String symbol, StockPricesInfo info) {
+		if (!info.getHighest().isPresent() || !info.getLowest().isPresent()) {
+			if (info.getCount() == 0) {
+				throw new StockSymbolNotFoundException();
+			}
+			return buildStockPricesNotFoundResponse();
+		}
+		return buildStockPricesFoundResponse(symbol, info);
+	}
+
+	private StockPricesResponse buildStockPricesNotFoundResponse() {
+		StockPricesNotFoundResponse response = new StockPricesNotFoundResponse();
+		response.setMessage("There are no trades in the given date range");
+		return response;
+	}
+
+	private StockPricesResponse buildStockPricesFoundResponse(String symbol, StockPricesInfo info) {
+		StockPricesFoundResponse response = new StockPricesFoundResponse();
+		response.setSymbol(symbol);
+		response.setHighest(info.getHighest().get());
+		response.setLowest(info.getLowest().get());
+		return response;
 	}
 
 }

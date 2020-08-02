@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hackerrank.stocktrade.exceptions.UserNotFoundException;
 import com.hackerrank.stocktrade.logic.model.FluctuationInfo;
+import com.hackerrank.stocktrade.logic.model.StockPricesInfo;
 import com.hackerrank.stocktrade.logic.model.StockStateInfo;
 import com.hackerrank.stocktrade.logic.model.TradeInfo;
 import com.hackerrank.stocktrade.repository.TradeRepository;
@@ -68,6 +69,13 @@ public class TradeReader {
 
 	public Long countTradeBySymbol(String symbol) {
 		return tradeRepository.countByStockSymbol(symbol);
+	}
+
+	public StockPricesInfo readStocksPricesByDateRange(String symbol, Date startDate, Date endDate) {
+		Long count = tradeRepository.countByStockSymbol(symbol);
+		Double highest = tradeRepository.readHighestPriceBySymbolAndDateRange(symbol, startDate, endDate);
+		Double lowest = tradeRepository.readLowestPriceBySymbolAndDateRange(symbol, startDate, endDate);
+		return new StockPricesInfo(count, highest, lowest);
 	}
 
 }
