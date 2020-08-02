@@ -1,4 +1,4 @@
-package com.hackerrank.stocktrade.logic;
+package com.hackerrank.stocktrade.data;
 
 import java.sql.Timestamp;
 

@@ -11,8 +11,8 @@ import com.hackerrank.stocktrade.controller.model.request.AddTradeRequest;
 import com.hackerrank.stocktrade.controller.model.response.StockPricesResponse;
 import com.hackerrank.stocktrade.controller.model.response.StockStateResponse;
 import com.hackerrank.stocktrade.controller.model.response.TradeResponse;
-import com.hackerrank.stocktrade.logic.TradeReader;
-import com.hackerrank.stocktrade.logic.TradeWriter;
+import com.hackerrank.stocktrade.logic.TradeLogicReader;
+import com.hackerrank.stocktrade.logic.TradeLogicWriter;
 import com.hackerrank.stocktrade.logic.model.StockPricesInfo;
 import com.hackerrank.stocktrade.logic.model.StockStateInfo;
 import com.hackerrank.stocktrade.logic.model.TradeInfo;
@@ -24,42 +24,42 @@ public class TradeApplication {
 	private ApplicationMapper applicationMapper;
 	
 	@Autowired
-	private TradeReader tradeReader;
+	private TradeLogicReader tradeLogicReader;
 	
 	@Autowired
-	private TradeWriter tradeWriter;
+	private TradeLogicWriter tradeLogicWriter;
 
 	public void addTrade(AddTradeRequest tradeRequest) {
 		TradeInfo tradeInfo = applicationMapper.tradeRequestToInfo(tradeRequest);
-		tradeWriter.addTrade(tradeInfo);
+		tradeLogicWriter.addTrade(tradeInfo);
 	}
 
 	public void deleteAllTrades() {	
-		tradeWriter.deleteAllTrades();
+		tradeLogicWriter.deleteAllTrades();
 	}
 
 	public List<TradeResponse> readAllTrades() {
-		List<TradeInfo> infos = tradeReader.readAllTrades();
+		List<TradeInfo> infos = tradeLogicReader.readAllTrades();
 		return infos.stream().map(t->applicationMapper.tradeInfoToResponse(t)).collect(Collectors.toList());
 	}
 
 	public List<TradeResponse> readAllTradesByUser(Long userID) {
-		List<TradeInfo> infos = tradeReader.readAllTradesByUser(userID);
+		List<TradeInfo> infos = tradeLogicReader.readAllTradesByUser(userID);
 		return infos.stream().map(t->applicationMapper.tradeInfoToResponse(t)).collect(Collectors.toList());
 	}
 
 	public StockPricesResponse readStocksPricesByDateRange(String symbol, String start, String end) {
 		Date startDate = applicationMapper.stringToStartDate(start);
 		Date endDate = applicationMapper.stringToEndDate(end);
-		StockPricesInfo info = tradeReader.readStocksPricesByDateRange(symbol, startDate, endDate);
+		StockPricesInfo info = tradeLogicReader.readStocksPricesByDateRange(symbol, startDate, endDate);
 		return applicationMapper.stocksPricesInfoToResponse(symbol, info);
 	}
 
 	public List<StockStateResponse> readStocksStatsByDateRange(String start, String end) {
 		Date startDate = applicationMapper.stringToStartDate(start);
 		Date endDate = applicationMapper.stringToEndDate(end);
-		List<String> symbols = tradeReader.readAllStocksSymbols();
-		List<StockStateInfo> infos = symbols.stream().map(s->tradeReader.readStockState(s, startDate, endDate)).collect(Collectors.toList());
+		List<String> symbols = tradeLogicReader.readAllStocksSymbols();
+		List<StockStateInfo> infos = symbols.stream().map(s->tradeLogicReader.readStockState(s, startDate, endDate)).collect(Collectors.toList());
 		return infos.stream().map(i->applicationMapper.stockStateInfoToResponse(i)).collect(Collectors.toList());
 	}
 

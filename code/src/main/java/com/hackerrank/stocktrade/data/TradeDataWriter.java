@@ -1,4 +1,4 @@
-package com.hackerrank.stocktrade.logic;
+package com.hackerrank.stocktrade.data;
 
 import java.util.List;
 
@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hackerrank.stocktrade.data.DataMapper;
 import com.hackerrank.stocktrade.logic.model.TradeInfo;
 import com.hackerrank.stocktrade.repository.TradeRepository;
 import com.hackerrank.stocktrade.repository.UserRepository;
@@ -16,7 +15,7 @@ import com.hackerrank.stocktrade.repository.model.UserEntity;
 
 @Service
 @Transactional(readOnly = false)
-public class TradeWriter {
+public class TradeDataWriter {
 
 	@Autowired
 	private TradeRepository tradeRepository;
