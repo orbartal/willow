@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hackerrank.stocktrade.controller.model.response.StockStateFoundResponse;
+import com.hackerrank.stocktrade.controller.model.response.StockStateNotFoundResponse;
 import com.hackerrank.stocktrade.controller.model.response.StockStateResponse;
 import com.hackerrank.stocktrade.exceptions.UserNotFoundException;
 import com.hackerrank.stocktrade.logic.model.StockStateInfo;
@@ -53,14 +55,15 @@ public class TradeReader {
 	}
 
 	public StockStateResponse readStockStateResponse(String symbol, Date startDate, Date endDate) {
-		StockStateResponse result = new StockStateResponse();
-		result.setSymbol(symbol);
 		List<Double> prices = tradeRepository.readPricesBySymbolAndDateRangeOrderByTime(symbol, startDate, endDate);
 		if (prices.isEmpty()) {
-			result.setFluctuations(0);
+			StockStateNotFoundResponse result = new StockStateNotFoundResponse();
+			result.setSymbol(symbol);
 			result.setMessage("There are no trades in the given date range");
 			return result;
 		}
+		StockStateFoundResponse result = new StockStateFoundResponse();
+		result.setSymbol(symbol);
 		List<Double> prices2 = filterSamePriceFollowingDay(prices);
 		if (prices2.size()<3) {
 			result.setFluctuations(0);
