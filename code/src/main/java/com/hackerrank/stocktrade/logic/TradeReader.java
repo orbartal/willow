@@ -68,7 +68,7 @@ public class TradeReader {
 		StockStateFoundResponse result = new StockStateFoundResponse();
 		result.setSymbol(symbol);
 		List<Double> prices2 = filterSamePriceFollowingDay(prices);
-		if (prices2.size()<3) {
+		if (prices2.size()==1) {
 			result.setFluctuations(0);
 			result.setMaxFall(ZERO);
 			result.setMaxRise(ZERO);
