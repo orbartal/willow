@@ -51,11 +51,10 @@ public class TradeApplication {
 	}
 
 	public StockPricesResponse readStocksPricesByDateRange(String symbol, String start, String end) {
-		Date startDate = applicationMapper.stringToDate(start);
-		Date endDate = applicationMapper.stringToDate(end);
-		Date endDate2 = new Date(endDate.getTime() + (1000 * 60 * 60 * 24)-1); //Until end of day
-		Double highest = tradeReader.readHighestPriceBySymbolAndDateRange(symbol, startDate, endDate2);
-		Double lowest = tradeReader.readLowestPriceBySymbolAndDateRange(symbol, startDate, endDate2);
+		Date startDate = applicationMapper.stringToStartDate(start);
+		Date endDate = applicationMapper.stringToEndDate(end);
+		Double highest = tradeReader.readHighestPriceBySymbolAndDateRange(symbol, startDate, endDate);
+		Double lowest = tradeReader.readLowestPriceBySymbolAndDateRange(symbol, startDate, endDate);
 		if (highest == null || lowest == null) {
 			Long count = tradeReader.countTradeBySymbol(symbol);
 			if (count == 0) {
@@ -73,11 +72,10 @@ public class TradeApplication {
 	}
 
 	public List<StockStateResponse> readStocksStatsByDateRange(String start, String end) {
-		Date startDate = applicationMapper.stringToDate(start);
-		Date endDate = applicationMapper.stringToDate(end);
-		Date endDate2 = new Date(endDate.getTime() + (1000 * 60 * 60 * 24)-1); //Until end of day
+		Date startDate = applicationMapper.stringToStartDate(start);
+		Date endDate = applicationMapper.stringToEndDate(end);
 		List<String> symbols = tradeReader.readAllStocksSymbols();
-		List<StockStateInfo> infos = symbols.stream().map(s->tradeReader.readStockState(s, startDate, endDate2)).collect(Collectors.toList());
+		List<StockStateInfo> infos = symbols.stream().map(s->tradeReader.readStockState(s, startDate, endDate)).collect(Collectors.toList());
 		return infos.stream().map(i->applicationMapper.stockStateInfoToResponse(i)).collect(Collectors.toList());
 	}
 

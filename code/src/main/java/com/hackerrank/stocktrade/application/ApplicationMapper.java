@@ -14,6 +14,7 @@ import com.hackerrank.stocktrade.controller.model.response.StockStateFoundRespon
 import com.hackerrank.stocktrade.controller.model.response.StockStateNotFoundResponse;
 import com.hackerrank.stocktrade.controller.model.response.StockStateResponse;
 import com.hackerrank.stocktrade.controller.model.response.TradeResponse;
+import com.hackerrank.stocktrade.exceptions.InvalidDateFormatException;
 import com.hackerrank.stocktrade.logic.model.FluctuationInfo;
 import com.hackerrank.stocktrade.logic.model.StockStateInfo;
 import com.hackerrank.stocktrade.logic.model.TradeInfo;
@@ -50,14 +51,23 @@ public class ApplicationMapper {
 		return output;
 	}
 
-	public Date stringToDate(String input) {
+	public Date stringToStartDate(String date) {
+		return stringToDate("start", date);
+	}
+
+	public Date stringToEndDate(String date) {
+		Date morning = stringToDate("end", date);
+		return new Date(morning.getTime() + (1000 * 60 * 60 * 24)-1); //Until end of day
+	}
+
+	private Date stringToDate(String context, String date) {
 		try {
-			return DATE_FORMAT.parse(input);
+			return DATE_FORMAT.parse(date);
 		}catch(ParseException e) {
-			throw new RuntimeException();//TODO
+			throw new InvalidDateFormatException(context, date);
 		}
 	}
-	
+
 	public StockStateResponse stockStateInfoToResponse(StockStateInfo input) {
 		if (!input.getFluctuation().isPresent()) {
 			StockStateNotFoundResponse result = new StockStateNotFoundResponse();

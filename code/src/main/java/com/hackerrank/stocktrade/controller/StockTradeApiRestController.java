@@ -23,6 +23,7 @@ import com.hackerrank.stocktrade.controller.model.response.StockStateResponse;
 import com.hackerrank.stocktrade.controller.model.response.TradeResponse;
 import com.hackerrank.stocktrade.exceptions.StockSymbolNotFoundException;
 import com.hackerrank.stocktrade.exceptions.UserNotFoundException;
+import com.hackerrank.stocktrade.exceptions.InvalidDateFormatException;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -115,5 +116,9 @@ public class StockTradeApiRestController {
 	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="Requested stock symbol does not exist")
 	@ExceptionHandler(StockSymbolNotFoundException.class)
 	public void error(StockSymbolNotFoundException ex) {}
+	
+	@ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="Invalid date format")
+	@ExceptionHandler(InvalidDateFormatException.class)
+	public void error(InvalidDateFormatException ex) {}
 
 }
