@@ -16,7 +16,6 @@ import com.hackerrank.stocktrade.logic.model.TradeInfo;
 import com.hackerrank.stocktrade.repository.TradeRepository;
 import com.hackerrank.stocktrade.repository.model.TradeEntity;
 
-
 @Service
 @Transactional(readOnly = true)
 public class TradeReader {
@@ -35,20 +34,12 @@ public class TradeReader {
 		return entities.stream().map(e->dataMapper.tradeEntityToInfo(e)).collect(Collectors.toList());
 	}
 
-	public List<TradeInfo> readAllTradesByUser(Long userID) {
-		List<TradeEntity> entities = tradeRepository.readAllByUserId(userID);
+	public List<TradeInfo> readAllTradesByUser(Long userUid) {
+		List<TradeEntity> entities = tradeRepository.readAllByUserUid(userUid);
 		if (entities.isEmpty()) {
 			throw new UserNotFoundException();
 		}
 		return entities.stream().map(e->dataMapper.tradeEntityToInfo(e)).collect(Collectors.toList());
-	}
-
-	public Double readHighestPriceBySymbolAndDateRange(String symbol, Date startDate, Date endDate) {
-		return tradeRepository.readHighestPriceBySymbolAndDateRange(symbol, startDate, endDate);
-	}
-
-	public Double readLowestPriceBySymbolAndDateRange(String symbol, Date startDate, Date endDate) {
-		return tradeRepository.readLowestPriceBySymbolAndDateRange(symbol, startDate, endDate);
 	}
 
 	public List<String> readAllStocksSymbols() {
@@ -65,10 +56,6 @@ public class TradeReader {
 			return new StockStateInfo(symbol, new FluctuationInfo(0, 0.0, 0.0));
 		}
 		return new StockStateInfo(symbol, stockStateReader.readStockStateInfo(prices2));
-	}
-
-	public Long countTradeBySymbol(String symbol) {
-		return tradeRepository.countByStockSymbol(symbol);
 	}
 
 	public StockPricesInfo readStocksPricesByDateRange(String symbol, Date startDate, Date endDate) {

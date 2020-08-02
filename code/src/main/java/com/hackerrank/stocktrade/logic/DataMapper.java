@@ -25,19 +25,22 @@ public class DataMapper {
 	}
 
 	public TradeEntity tradeInfoToEntity(TradeInfo info) {
-		UserEntity user = new UserEntity();
-		user.setUid(info.getUser().getId());
-		user.setName(info.getUser().getName());
-
 		TradeEntity e = new TradeEntity();
 		e.setUid(info.getId());
 	    e.setType(info.getType());
-	    e.setUser(user);
+	    e.setUser(userTradeInfoToEntity(info.getUser()));
 	    e.setStockSymbol(info.getStockSymbol());
 	    e.setTradeTimestamp(info.getTradeTimestamp());
 	    e.setStockPrice(info.getStockPrice());
 	    e.setStockQuantity(info.getStockQuantity());
 		return e;
+	}
+
+	private UserEntity userTradeInfoToEntity(UserInfo info) {
+		UserEntity user = new UserEntity();
+		user.setUid(info.getId());
+		user.setName(info.getName());
+		return user;
 	}
 
 }

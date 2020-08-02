@@ -14,7 +14,7 @@ import com.hackerrank.stocktrade.repository.model.TradeEntity;
 public interface TradeRepository extends JpaRepository<TradeEntity, Long> {
 
 	@Query(value = "SELECT t FROM TradeEntity t WHERE t.user.uid = :userUid")
-	public List<TradeEntity> readAllByUserId(@Param("userUid") Long userUid);
+	public List<TradeEntity> readAllByUserUid(@Param("userUid") Long userUid);
 	
 	@Query(value = "SELECT MAX (t.stockPrice) FROM TradeEntity t WHERE t.stockSymbol = :symbol AND "
 			+ "t.tradeTimestamp >= :startDate AND t.tradeTimestamp <= :endDate")

@@ -10,7 +10,6 @@ import com.hackerrank.stocktrade.logic.model.FluctuationInfo;
 @Component
 public class StockStateReader {
 
-	//TODO: Could this be written as a stream?
 	public List<Double> filterSamePriceFollowingDay(List<Double> prices) {
 		List<Double> results = new ArrayList<>();
 		results.add(prices.get(0));
