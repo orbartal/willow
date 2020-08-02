@@ -1,6 +1,5 @@
 package com.hackerrank.stocktrade.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,10 +91,11 @@ public class StockTradeApiRestController {
         @ApiResponse(code = 200, message = "Success"),
        	@ApiResponse(code = 404, message = "Requested stock symbol does not exist"),
 	})
-    @RequestMapping(value = "/stocks/stats?start={startDate}&end={endDate}", method = RequestMethod.GET)
+    @RequestMapping(value = "/stocks/stats", method = RequestMethod.GET)
 	public ResponseEntity<List<StockStateResponse>> getStocksStatsByDateRange(
-			@PathVariable("startDate") Date startDate,
-			@PathVariable("endDate") Date endDate) throws RuntimeException {
+			@RequestParam("startDate") String startDate,
+			@RequestParam("endDate")  String endDate
+			) throws RuntimeException {
 		List<StockStateResponse> data = tradeApplication.readStocksStatsByDateRange(startDate, endDate);
     	return ResponseEntity.ok(data);	
 	}

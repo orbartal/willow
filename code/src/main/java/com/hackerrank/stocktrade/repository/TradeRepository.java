@@ -29,7 +29,16 @@ public interface TradeRepository extends JpaRepository<TradeEntity, Long> {
 			@Param("symbol") String symbol,
 			@Param("startDate") Date startDate, 
 			@Param("endDate") Date endDate);
-	
-	
+
+	@Query(value = "SELECT DISTINCT t.stockSymbol FROM TradeEntity t")
+	public List<String> readAllStocksSymbols();
+
+	@Query(value = "SELECT t.stockPrice FROM TradeEntity t WHERE t.stockSymbol = :symbol AND "
+			+ "t.tradeTimestamp >= :startDate AND t.tradeTimestamp <= :endDate "
+			+ "ORDER BY t.tradeTimestamp ASC")
+	public List<Double> readPricesBySymbolAndDateRangeOrderByTime(
+			@Param("symbol") String symbol,
+			@Param("startDate") Date startDate, 
+			@Param("endDate") Date endDate);
 
 }

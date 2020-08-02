@@ -59,9 +59,11 @@ public class TradeApplication {
 		return response;
 	}
 
-	//TODO
-	public List<StockStateResponse> readStocksStatsByDateRange(Date startDate, Date endDate) {
-		return new ArrayList<>();
+	public List<StockStateResponse> readStocksStatsByDateRange(String start, String end) {
+		Date startDate = applicationMapper.stringToDate(start);
+		Date endDate = applicationMapper.stringToDate(end);
+		List<String> symbols = tradeReader.readAllStocksSymbols();
+		return symbols.stream().map(s->tradeReader.readStockStateResponse(s, startDate, endDate)).collect(Collectors.toList());
 	}
 
 }
